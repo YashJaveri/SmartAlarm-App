@@ -16,7 +16,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".AlarmReceiver"/>
+        <activity
+            android:name=".SnoozePageActivity"
+            android:label="SnoozePageActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SetAlarmPage"
+            android:label="SetAlarmPage"
+            android:parentActivityName=".MainActivity" />
+
+        <receiver android:name=".AlarmReceiver" />
     </application>
 
 </manifest>

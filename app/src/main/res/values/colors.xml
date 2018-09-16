@@ -6,4 +6,6 @@
     <color name="DarkGrey">#202020</color>
     <color name="Grey">#383838</color>
     <color name="mCustomWhite">#F5F5F5</color>
+    <color name="LightGrey">#B0B0B0</color>
+    <color name="transparent">#00000000</color>
 </resources>

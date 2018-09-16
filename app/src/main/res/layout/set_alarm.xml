@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Grey">
+
+
+    <NumberPicker
+        android:id="@+id/numPicker_hours"
+        android:layout_width="56dp"
+        android:layout_height="115dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="35dp"
+        android:layout_toEndOf="@+id/txt_airplaneModeDetails" />
+
+    <NumberPicker
+        android:id="@+id/numPicker_minutes"
+        android:layout_width="56dp"
+        android:layout_height="115dp"
+        android:layout_alignTop="@+id/numPicker_hours"
+        android:layout_toStartOf="@+id/txt_repeatDetails" />
+
+    <TextView
+        android:id="@+id/txt_hourDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="157dp"
+        android:text="X hours from now"
+        android:textAlignment="center"
+        android:textColor="@color/LightGrey"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/txt_before1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/txt_before2"
+        android:layout_marginBottom="287dp"
+        android:text="Snooze before"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <NumberPicker
+        android:id="@+id/numPicker_pik1"
+        android:layout_width="32dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/txt_before1"
+        android:layout_marginStart="-58dp"
+        android:layout_toEndOf="@+id/txt_repeat"
+        android:descendantFocusability="blocksDescendants" />
+
+    <TextView
+        android:id="@+id/txt_before2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/txt_airplaneMode"
+        android:layout_marginBottom="244dp"
+        android:text="Snooze before"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <NumberPicker
+        android:id="@+id/numPicker_pik2"
+        android:layout_width="32dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/txt_before2"
+        android:layout_marginStart="-58dp"
+        android:layout_toEndOf="@+id/txt_repeat"
+        android:descendantFocusability="blocksDescendants" />
+
+    <TextView
+        android:id="@+id/txt_before3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/txt_airplaneMode"
+        android:layout_marginBottom="200dp"
+        android:text="Snooze before"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <NumberPicker
+        android:id="@+id/numPicker_pik3"
+        android:layout_width="32dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/txt_before4"
+        android:layout_marginStart="-58dp"
+        android:layout_toEndOf="@+id/txt_repeat"
+        android:descendantFocusability="blocksDescendants"
+        android:scrollbarSize="40dp" />
+
+    <TextView
+        android:id="@+id/txt_before4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/txt_before1"
+        android:layout_marginBottom="154dp"
+        android:text="Snooze before"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <NumberPicker
+        android:id="@+id/numPicker_pik4"
+        android:layout_width="32dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/txt_before3"
+        android:layout_marginStart="-58dp"
+        android:layout_toEndOf="@+id/txt_repeat"
+        android:descendantFocusability="blocksDescendants"
+        android:scrollbarSize="40dp" />
+
+
+    <TextView
+        android:id="@+id/txt_airplaneMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="81dp"
+        android:layout_marginStart="29dp"
+        android:text="Air Plane Mode"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/txt_airplaneModeDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/switch_airplaneMode"
+        android:layout_below="@+id/txt_repeat"
+        android:text="*during alarm"
+        android:textAlignment="center"
+        android:textColor="@color/LightGrey"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switch_airplaneMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="27dp"
+        android:layout_marginStart="65dp" />
+
+    <TextView
+        android:id="@+id/txt_repeatDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txt_repeat"
+        android:layout_below="@+id/txt_repeat"
+        android:text="*everyday"
+        android:textAlignment="center"
+        android:textColor="@color/LightGrey"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/txt_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/txt_airplaneMode"
+        android:layout_marginEnd="58dp"
+        android:text="Repeat"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switch_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/txt_repeat"
+        android:layout_alignTop="@+id/switch_airplaneMode" />
+
+</RelativeLayout>
