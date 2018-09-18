@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="178dp"
+        android:layout_marginTop="211dp"
         android:text="11:40"
-        android:textSize="76sp"
+        android:textSize="64sp"
         tools:ignore="HardcodedText" />
 
     <TextView

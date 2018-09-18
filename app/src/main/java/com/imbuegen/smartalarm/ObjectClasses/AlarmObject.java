@@ -1,5 +1,8 @@
 package com.imbuegen.smartalarm.ObjectClasses;
 
+import android.print.PrinterId;
+import android.provider.CalendarContract;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -9,7 +12,9 @@ public class AlarmObject {
     private List<Integer> snoozeList;
     private boolean airplaneIsOn = true;
     private boolean repeatIsOn = false;
+    private String alarmTitle = "Wake Up!";
     private boolean isOn = true;
+    private int minDuration, hourDuration;
 
     public Calendar getAlarmTime() {
         return alarmTime;
@@ -49,5 +54,29 @@ public class AlarmObject {
 
     public void setOn(boolean on) {
         isOn = on;
+    }
+
+    public String getAlarmTitle() {
+        return alarmTitle;
+    }
+
+    public void setAlarmTitle(String alarmTitle) {
+        this.alarmTitle = alarmTitle;
+    }
+
+    public int getMinDuration() {
+        return minDuration;
+    }
+
+    public void setMinDuration(int minDuration) {
+        this.minDuration = minDuration;
+    }
+
+    public int getHourDuration() {
+        return hourDuration;
+    }
+
+    public void setHourDuration(int hourDuration) {
+        this.hourDuration = hourDuration;
     }
 }

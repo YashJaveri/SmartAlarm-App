@@ -12,7 +12,11 @@ import android.widget.TextView;
 
 import com.elmargomez.typer.Font;
 import com.elmargomez.typer.Typer;
+import com.imbuegen.smartalarm.ObjectClasses.AlarmObject;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,23 +25,27 @@ public class SnoozePageActivity extends AppCompatActivity {
     Timer timer;
     MediaPlayer alarm1, alarmFinal;
     Button stopBtn;
-    TextView time, message;
+    TextView time, title;
+    AlarmObject alarmObject;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         setContentView(R.layout.alarm_snooze_page);
+
+        alarmObject = MainActivity.listOfAlarms.get(getIntent().getIntExtra("Index", 0));
     }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         init();
-        Log.d("SmartAlarm", "2. Text View Id:- " + R.id.txt_time);
         if (Objects.requireNonNull(getIntent().getExtras()).getBoolean("Final?"))   //Start playing alarm
             alarmFinal.start();
         else
@@ -45,7 +53,7 @@ public class SnoozePageActivity extends AppCompatActivity {
 
         //To stop after playing 3 min:
         //--> Schedule timer of 3 min
-        timer.schedule(new MyTimerTask(), 150*1000);
+        timer.schedule(new MyTimerTask(), 150 * 1000);
     }
 
     private void init() {
@@ -56,13 +64,15 @@ public class SnoozePageActivity extends AppCompatActivity {
         alarmFinal.setLooping(true);
 
         time = findViewById(R.id.txt_time);
-        message = findViewById(R.id.txt_message);
+        title = findViewById(R.id.txt_message);
         stopBtn = findViewById(R.id.btn_Stop);
-        if (time == null)
-            Log.d("SmartAlarm", "null!");
         time.setTypeface(Typer.set(SnoozePageActivity.this).getFont(Font.ROBOTO_THIN));
-        message.setTypeface(Typer.set(SnoozePageActivity.this).getFont(Font.ROBOTO_REGULAR));
-        Log.d("SmartAlarm", "1. Text View Id:- " + R.id.txt_message);
+        title.setTypeface(Typer.set(SnoozePageActivity.this).getFont(Font.ROBOTO_REGULAR));
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
+        time.setText(sdf.format(calendar.getTime()));
+        title.setText(alarmObject.getAlarmTitle());
     }
 
     public void stopPlayingAlarm(View view) {
@@ -89,7 +99,7 @@ public class SnoozePageActivity extends AppCompatActivity {
                 alarmFinal.stop();
             }
             //Finish activity:
-            if(!isDestroyed())
+            if (!isDestroyed())
                 finish();
 
             timer.cancel();

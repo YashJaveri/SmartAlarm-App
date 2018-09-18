@@ -1,12 +1,17 @@
 package com.imbuegen.smartalarm;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.imbuegen.smartalarm.ObjectClasses.AlarmObject;
 
@@ -24,6 +30,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class SetAlarmPage extends AppCompatActivity {
@@ -32,6 +39,8 @@ public class SetAlarmPage extends AppCompatActivity {
     NumberPicker hoursNP, minNP, np1, np2, np3, np4;
     TextView durationView;
     SwitchCompat airplane, repeat;
+    EditText alarmTitleEditTxt;
+    Toolbar toolBar;
     //Alarm
     private Calendar alarmTime;
     private List<Integer> snoozeList = Arrays.asList(20, 14, 9, 4, 0);
@@ -39,11 +48,12 @@ public class SetAlarmPage extends AppCompatActivity {
     boolean airplaneIsOn = true;
     boolean repeatIsOn = false;
     private AlarmObject alarmObject;
+    private String alarmTitle = "Wake Up!";
     //Other
     int minDuration = 30, hourDuration = 7;
-    String durationText = "7 hour(s) & 30 min from now";
+    String durationText = "7 hour(s) & 15 min from now";
     Calendar rightNow;
-    final String[] minList = {"00", "10", "20", "30", "40", "50"};
+    final String[] minList = {"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
 
     @Override
     protected void onStart() {
@@ -65,50 +75,93 @@ public class SetAlarmPage extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.mymenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     // handle top-right button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.btn_save) {
+            snoozeList.set(0, np1.getValue());
+            snoozeList.set(1, np2.getValue());
+            snoozeList.set(2, np3.getValue());
+            snoozeList.set(3, np4.getValue());
+
             alarmTime = Calendar.getInstance();
-            hourDuration += alarmTime.get(Calendar.HOUR);
-            alarmTime.set(Calendar.HOUR, hourDuration);
-            minDuration += alarmTime.get(Calendar.MINUTE);
-            alarmTime.set(Calendar.MINUTE, minDuration);
+            hourDuration += alarmTime.get(Calendar.HOUR);   //get current hour
+            alarmTime.set(Calendar.HOUR, hourDuration);     //add hour
+            minDuration += alarmTime.get(Calendar.MINUTE);  //get current minute
+            alarmTime.set(Calendar.MINUTE, minDuration);    //add minute
             alarmObject.setAlarmTime(alarmTime);
 
+            alarmObject.setHourDuration(hourDuration);
+            alarmObject.setMinDuration(minDuration);
+            //Remove repeats
             snoozeSet.clear();
             snoozeSet = new LinkedHashSet<>(snoozeList);
             snoozeList.clear();
-            snoozeList.addAll(snoozeSet);   //Remove repeats
+            snoozeList.addAll(snoozeSet);
             alarmObject.setSnoozeList(snoozeList);
-
+            //Other params:
             alarmObject.setOn(true);
             alarmObject.setRepeatIsOn(repeatIsOn);
             alarmObject.setAirplaneIsOn(airplaneIsOn);
-            MainActivity.listOfAlarms.add(alarmObject);
+            alarmObject.setAlarmTitle(alarmTitle);
+
+            //Modify main act list:
+            if (getIntent().getBooleanExtra("Edit?", false))
+                MainActivity.listOfAlarms.set(getIntent().getIntExtra("Pos", 0), alarmObject);
+            else
+                MainActivity.listOfAlarms.add(alarmObject);
+
+            //To remove similar:-
             for (int i = 0; i < MainActivity.listOfAlarms.size() - 2; i++) {
-                if (MainActivity.listOfAlarms.get(i).getAlarmTime() == alarmTime) {
+                if (MainActivity.listOfAlarms.get(i).getAlarmTime().get(Calendar.HOUR) == alarmTime.get(Calendar.HOUR)
+                        && MainActivity.listOfAlarms.get(i).getAlarmTime().get(Calendar.MINUTE) == alarmTime.get(Calendar.MINUTE)
+                        && MainActivity.listOfAlarms.get(i) != alarmObject) {
                     MainActivity.listOfAlarms.remove(alarmObject);
                     break;
                 }
             }
 
-            Intent mainActIntent = new Intent(this, MainActivity.class);
+
+            Intent mainActIntent = new Intent();
             setResult(Constants.RESULT_CODE_OK, mainActIntent);
-            startActivity(mainActIntent);
+            finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to discard this alarm?")
+                .setPositiveButton(Html.fromHtml("<font color='#202020'>Yes</font>"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mainActIntent = new Intent();
+                        setResult(-1, mainActIntent);
+                        finish();
+                    }
+
+                })
+                .setNegativeButton(Html.fromHtml("<font color='#202020'>No</font>"), null)
+                .show();
     }
 
     private void init() {
         //Alarm
         snoozeList = new ArrayList<>();
-        snoozeList.add(20);
-        snoozeList.add(14);
-        snoozeList.add(9);
-        snoozeList.add(4);
+        if (getIntent().getBooleanExtra("Edit?", false)) {
+            snoozeList = new ArrayList<>();
+            snoozeList = MainActivity.listOfAlarms.get(getIntent().getIntExtra("Pos", 0)).getSnoozeList();
+        } else {
+            snoozeList.add(20);
+            snoozeList.add(14);
+            snoozeList.add(9);
+            snoozeList.add(4);
+            snoozeList.add(0);
+        }
         snoozeSet = new LinkedHashSet<>(snoozeList);
         alarmObject = new AlarmObject();
         //Other
@@ -121,24 +174,12 @@ public class SetAlarmPage extends AppCompatActivity {
         np2 = findViewById(R.id.numPicker_pik2);
         np3 = findViewById(R.id.numPicker_pik3);
         np4 = findViewById(R.id.numPicker_pik4);
+        alarmTitleEditTxt = findViewById(R.id.editTxt_alarmTitle);
         durationView = findViewById(R.id.txt_hourDetails);
         durationView.setText(durationText);
         airplane = findViewById(R.id.switch_airplaneMode);
         repeat = findViewById(R.id.switch_repeat);
 
-        hoursNP.setMinValue(1);
-        hoursNP.setMaxValue(12);
-        minNP.setMinValue(0);
-        minNP.setMaxValue(minList.length - 1);
-        minNP.setDisplayedValues(minList);
-        np1.setMinValue(0);
-        np1.setMaxValue(30);
-        np2.setMinValue(0);
-        np2.setMaxValue(30);
-        np3.setMinValue(0);
-        np3.setMaxValue(30);
-        np4.setMinValue(0);
-        np4.setMaxValue(30);
         //Changing text color of the number picker
         setNumberPickerTextColor(np1);
         setNumberPickerTextColor(np2);
@@ -153,13 +194,21 @@ public class SetAlarmPage extends AppCompatActivity {
         np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np3.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np4.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        //set def values(In my opinion)
-        hoursNP.setValue(7);
-        minNP.setValue(3);
-        np1.setValue(20);
-        np2.setValue(14);
-        np3.setValue(9);
-        np4.setValue(4);
+
+        if (getIntent().getBooleanExtra("Edit?", false)) {
+            AlarmObject _am = MainActivity.listOfAlarms.get(getIntent().getIntExtra("Pos", 0));
+            minDuration = _am.getMinDuration();
+            hourDuration = _am.getHourDuration();
+            if (_am.getHourDuration() == 0) ;
+            editNumbPickersVals(true, minDuration);
+            for (int i = 0; i < minList.length; i++) {
+                if (minList[i].equals(Integer.toString(minDuration)))
+                    minNP.setValue(i);
+            }
+            hoursNP.setValue(hourDuration);
+        } else {
+            editNumbPickersVals(false, 30);
+        }
     }
 
     private void setListeners() {
@@ -168,17 +217,37 @@ public class SetAlarmPage extends AppCompatActivity {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 hourDuration = i1;
-                durationText = Integer.toString(hourDuration) + " hour(s) & " + Integer.toString(minDuration) + "0 min from now";
+                durationText = Integer.toString(hourDuration) + " hour(s) & " + Integer.toString(minDuration) + " min from now";
                 durationView.setText(durationText);
+                minDuration = Integer.parseInt(minList[minNP.getValue()]);
+
+                if (hourDuration == 0) {
+                    editNumbPickersVals(true, minDuration - 1);
+                } else if (i == 0 && i1 != 0) {
+                    hoursNP.setMinValue(0);
+                    hoursNP.setMaxValue(12);
+                    minNP.setMinValue(0);
+                    minNP.setMaxValue(minList.length - 1);
+                    minNP.setDisplayedValues(minList);
+                    editNumbPickersVals(false, 30);
+                } else if (minDuration == 0 && hourDuration == 0)
+                    editNumbPickersVals(true, 0);
             }
         });
 
         minNP.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                minDuration = i1;
-                durationText = Integer.toString(hourDuration) + " hour(s) & " + Integer.toString(minDuration) + "0 min from now";
+                minDuration = Integer.parseInt(minList[i1]);
+                durationText = Integer.toString(hourDuration) + " hour(s) & " + Integer.toString(minDuration) + " min from now";
                 durationView.setText(durationText);
+                hourDuration = hoursNP.getValue();
+
+                if (hourDuration == 0 && minDuration != 0) {
+                    editNumbPickersVals(true, minDuration - 1);
+                } else if (minDuration == 0 && hourDuration == 0)
+                    editNumbPickersVals(true, 0);
+
             }
         });
 
@@ -222,9 +291,55 @@ public class SetAlarmPage extends AppCompatActivity {
                 repeatIsOn = b;
             }
         });
+        alarmTitleEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                alarmTitle = alarmTitleEditTxt.getText().toString();
+            }
+        });
     }
 
-    public void setNumberPickerTextColor(NumberPicker numberPicker) {
+    private void editNumbPickersVals(Boolean isHoursZero, int max) {
+
+        hoursNP.setMinValue(0);
+        hoursNP.setMaxValue(12);
+        minNP.setMinValue(0);
+        minNP.setMaxValue(minList.length - 1);
+        minNP.setDisplayedValues(minList);
+        np1.setMinValue(0);
+        np1.setMaxValue(max);
+        np2.setMinValue(0);
+        np2.setMaxValue(max);
+        np3.setMinValue(0);
+        np3.setMaxValue(max);
+        np4.setMinValue(0);
+        np4.setMaxValue(max);
+
+        if (isHoursZero) {
+            np1.setValue(0);
+            np2.setValue(0);
+            np3.setValue(0);
+            np4.setValue(0);
+        } else {
+            //set def values(In my opinion)
+            hoursNP.setValue(7);
+            minNP.setValue(3);
+            np1.setValue(20);
+            np2.setValue(14);
+            np3.setValue(9);
+            np4.setValue(4);
+        }
+    }
+
+    private void setNumberPickerTextColor(NumberPicker numberPicker) {
         final int count = numberPicker.getChildCount();
         for (int i = 0; i < count; i++) {
             View child = numberPicker.getChildAt(i);

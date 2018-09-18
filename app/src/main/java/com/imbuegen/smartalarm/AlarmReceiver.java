@@ -15,13 +15,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent snoozeActivityIntent = new Intent(context, SnoozePageActivity.class);
+        if (MainActivity.listOfAlarms.get(intent.getIntExtra("Index", 0)).isOn()) {
+            Intent snoozeActivityIntent = new Intent(context, SnoozePageActivity.class);
+            snoozeActivityIntent.putExtra("Index",intent.getIntExtra("Index", 0));
 
-        if (Objects.requireNonNull(intent.getExtras()).getBoolean("Final?"))
-            snoozeActivityIntent.putExtra("Final?", true);
-        else
-            snoozeActivityIntent.putExtra("Final?", false);
+            if (Objects.requireNonNull(intent.getExtras()).getBoolean("Final?"))
+                snoozeActivityIntent.putExtra("Final?", true);
+            else
+                snoozeActivityIntent.putExtra("Final?", false);
 
-        context.startActivity(snoozeActivityIntent);
+            context.startActivity(snoozeActivityIntent);
+        }
     }
 }

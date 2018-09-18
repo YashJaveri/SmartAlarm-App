@@ -10,8 +10,8 @@
         android:id="@+id/numPicker_hours"
         android:layout_width="56dp"
         android:layout_height="115dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="35dp"
+        android:layout_above="@+id/txt_hourDetails"
+        android:layout_marginBottom="-207dp"
         android:layout_toEndOf="@+id/txt_airplaneModeDetails" />
 
     <NumberPicker
@@ -27,12 +27,29 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="157dp"
+        android:layout_marginTop="207dp"
         android:text="X hours from now"
         android:textAlignment="center"
         android:textColor="@color/LightGrey"
         android:textSize="15sp"
         android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTxt_alarmTitle"
+        android:layout_width="194dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:gravity="center"
+        android:hint="Alarm title"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textColor="@color/mCustomWhite"
+        android:textColorHint="@color/LightGrey"
+        android:textSize="16sp"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -166,7 +183,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="27dp"
-        android:layout_marginStart="65dp" />
+        android:layout_marginStart="65dp"
+        android:backgroundTint="@color/colorAccent"
+        android:theme="@style/SwitchTheme" />
 
     <TextView
         android:id="@+id/txt_repeatDetails"
@@ -200,6 +219,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/txt_repeat"
-        android:layout_alignTop="@+id/switch_airplaneMode" />
+        android:layout_alignTop="@+id/switch_airplaneMode"
+        android:theme="@style/SwitchTheme" />
 
 </RelativeLayout>
