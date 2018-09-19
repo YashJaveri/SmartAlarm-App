@@ -92,9 +92,10 @@
     <NumberPicker
         android:id="@+id/numPicker_pik2"
         android:layout_width="32dp"
-        android:layout_height="42dp"
+        android:layout_height="46dp"
         android:layout_alignTop="@+id/txt_before2"
         android:layout_marginStart="-58dp"
+        android:layout_marginTop="-4dp"
         android:layout_toEndOf="@+id/txt_repeat"
         android:descendantFocusability="blocksDescendants" />
 
@@ -116,9 +117,8 @@
         android:id="@+id/numPicker_pik3"
         android:layout_width="32dp"
         android:layout_height="42dp"
-        android:layout_alignTop="@+id/txt_before4"
-        android:layout_marginStart="-58dp"
-        android:layout_toEndOf="@+id/txt_repeat"
+        android:layout_alignStart="@+id/numPicker_pik1"
+        android:layout_below="@+id/numPicker_pik2"
         android:descendantFocusability="blocksDescendants"
         android:scrollbarSize="40dp" />
 
@@ -140,9 +140,8 @@
         android:id="@+id/numPicker_pik4"
         android:layout_width="32dp"
         android:layout_height="42dp"
-        android:layout_alignTop="@+id/txt_before3"
-        android:layout_marginStart="-58dp"
-        android:layout_toEndOf="@+id/txt_repeat"
+        android:layout_alignStart="@+id/numPicker_pik1"
+        android:layout_below="@+id/numPicker_pik3"
         android:descendantFocusability="blocksDescendants"
         android:scrollbarSize="40dp" />
 

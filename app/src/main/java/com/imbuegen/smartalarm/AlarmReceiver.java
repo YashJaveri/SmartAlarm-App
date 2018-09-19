@@ -18,7 +18,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (MainActivity.listOfAlarms.get(intent.getIntExtra("Index", 0)).isOn()) {
             Intent snoozeActivityIntent = new Intent(context, SnoozePageActivity.class);
             snoozeActivityIntent.putExtra("Index",intent.getIntExtra("Index", 0));
-
+//            Log.d("Smart snooze list: ", MainActivity.listOfAlarms.get(intent.getIntExtra("Index", 0)).getSnoozeList().toString());
             if (Objects.requireNonNull(intent.getExtras()).getBoolean("Final?"))
                 snoozeActivityIntent.putExtra("Final?", true);
             else

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class MyListAdapter extends BaseAdapter{
     private Context context;
     private ArrayList<AlarmObject> listOfAlarms;
     private AlarmObject ao;
+    private int i1 = 0;
 
     public MyListAdapter(Context _context, ArrayList<AlarmObject> _listOfAlarms) {
         this.context = _context;
@@ -51,26 +53,28 @@ public class MyListAdapter extends BaseAdapter{
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        final int i1 =i;
+        i1 = i;
         ao = listOfAlarms.get(i);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
-        @SuppressLint("ViewHolder") View relativeLayoutItem = (RelativeLayout) inflater.inflate(R.layout.alarm_item, viewGroup, false);
+        @SuppressLint("ViewHolder") View relativeLayoutItem = inflater.inflate(R.layout.alarm_item, viewGroup, false);
 
         TextView timeText = relativeLayoutItem.findViewById(R.id.txt_alarmItemTime);
         SwitchCompat alarmState = relativeLayoutItem.findViewById(R.id.switch_alarmItemToggle);
+//        Log.d("Smart Alarm:", Boolean.toString( MainActivity.listOfAlarms.get(i1).isOn()));
+        alarmState.setChecked(ao.isOn());
         alarmState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 ao.setOn(b);
                 MainActivity.listOfAlarms.get(i1).setOn(b);
+//                Log.d("Smart Alarm id on:", Boolean.toString(MainActivity.listOfAlarms.get(i1).isOn()));
             }
         });
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
 
         timeText.setTypeface(Typer.set(context).getFont(Font.ROBOTO_THIN));
         timeText.setText(sdf.format(ao.getAlarmTime().getTime()));
-        alarmState.setChecked(ao.isOn());
 
         return relativeLayoutItem;
     }

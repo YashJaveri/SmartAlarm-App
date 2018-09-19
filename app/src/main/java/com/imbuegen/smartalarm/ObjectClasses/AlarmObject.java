@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class AlarmObject {
-    private Calendar alarmTime;
+    private Calendar alarmTime, current;
     private List<Integer> snoozeList;
     private boolean airplaneIsOn = true;
     private boolean repeatIsOn = false;
@@ -32,7 +32,7 @@ public class AlarmObject {
         this.snoozeList = snoozeList;
     }
 
-    public boolean isAirplaneIsOn() {
+    public boolean isAirplaneOn() {
         return airplaneIsOn;
     }
 
@@ -40,7 +40,7 @@ public class AlarmObject {
         this.airplaneIsOn = airplaneIsOn;
     }
 
-    public boolean isRepeatIsOn() {
+    public boolean isRepeatOn() {
         return repeatIsOn;
     }
 
@@ -78,5 +78,13 @@ public class AlarmObject {
 
     public void setHourDuration(int hourDuration) {
         this.hourDuration = hourDuration;
+    }
+
+    public Calendar getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Calendar current) {
+        this.current = current;
     }
 }
