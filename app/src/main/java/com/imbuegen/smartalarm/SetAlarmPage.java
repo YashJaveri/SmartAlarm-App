@@ -85,15 +85,12 @@ public class SetAlarmPage extends AppCompatActivity {
     // handle top-right button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.btn_save) {
-
+        if (item.getItemId() == R.id.btn_save) {
             snoozeList.set(0, np1.getValue());
             snoozeList.set(1, np2.getValue());
             snoozeList.set(2, np3.getValue());
             snoozeList.set(3, np4.getValue());
-            //:---------------If add state::----------------
+            //:---------------If edit state::----------------
             if (getIntent().getBooleanExtra("Edit?", false)) {
                 AlarmObject _am = MainActivity.listOfAlarms.get(getIntent().getIntExtra("Pos", 0));
                 alarmTime = _am.getCurrent();
@@ -103,7 +100,7 @@ public class SetAlarmPage extends AppCompatActivity {
                 alarmTime.set(Calendar.MINUTE, minDuration);    //add minute
                 alarmObject.setAlarmTime(alarmTime);            //SET ALARM TIME
 
-            } else {
+            } else {   //:---------------If add state::----------------
                 alarmTime = Calendar.getInstance();
                 hourDuration += alarmTime.get(Calendar.HOUR);   //get current hour
                 minDuration += alarmTime.get(Calendar.MINUTE);  //get current minute
@@ -127,7 +124,10 @@ public class SetAlarmPage extends AppCompatActivity {
             alarmObject.setOn(true);
             alarmObject.setRepeatIsOn(repeatIsOn);
             alarmObject.setAirplaneIsOn(airplaneIsOn);
-            alarmObject.setAlarmTitle(alarmTitle);
+            if (alarmTitleEditTxt.getText() == null)
+                alarmObject.setAlarmTitle("");
+            else
+                alarmObject.setAlarmTitle(alarmTitle);
 
             //Modify main act list:
             if (getIntent().getBooleanExtra("Edit?", false))
@@ -216,6 +216,7 @@ public class SetAlarmPage extends AppCompatActivity {
         if (getIntent().getBooleanExtra("Edit?", true)) {
             AlarmObject _am = MainActivity.listOfAlarms.get(getIntent().getIntExtra("Pos", 0));
             alarmTitle = _am.getAlarmTitle();
+            alarmTitleEditTxt.setText(alarmTitle);
 
             minDuration = _am.getMinDuration();
             hourDuration = _am.getHourDuration();
@@ -252,8 +253,11 @@ public class SetAlarmPage extends AppCompatActivity {
             repeatIsOn = _am.isRepeatOn();
             airplane.setChecked(airplaneIsOn);
             repeat.setChecked(repeatIsOn);
-        } else         //:---------------If add state::----------------
+        } else {         //:---------------If add state::----------------
             editNumbPickersVals(false, 55, true);
+            airplane.setChecked(airplaneIsOn);
+            repeat.setChecked(repeatIsOn);
+        }
     }
 
     private void setListeners() {

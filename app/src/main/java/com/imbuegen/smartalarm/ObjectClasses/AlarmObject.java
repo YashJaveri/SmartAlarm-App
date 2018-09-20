@@ -3,11 +3,12 @@ package com.imbuegen.smartalarm.ObjectClasses;
 import android.print.PrinterId;
 import android.provider.CalendarContract;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class AlarmObject {
+public class AlarmObject implements Serializable{
     private Calendar alarmTime, current;
     private List<Integer> snoozeList;
     private boolean airplaneIsOn = true;

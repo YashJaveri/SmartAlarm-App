@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 public class AlarmController {
@@ -19,8 +20,12 @@ public class AlarmController {
     }
 
     public void setSmartAlarm(int index) {
+        Bundle mBundle = new Bundle();
+        mBundle.putSerializable("listOfAlarms", MainActivity.listOfAlarms);
         Intent mintent = new Intent(context, AlarmReceiver.class);
+
         mintent.putExtra("Index", index);
+        mintent.putExtra("listOfAlarms", mBundle);
         for (int j = 0; j < MainActivity.listOfAlarms.get(index).getSnoozeList().size(); j++) {
             if (j == MainActivity.listOfAlarms.get(index).getSnoozeList().size() - 1)
                 mintent.putExtra("Final?", true);

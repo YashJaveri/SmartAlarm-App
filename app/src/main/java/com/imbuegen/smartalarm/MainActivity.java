@@ -3,6 +3,7 @@ package com.imbuegen.smartalarm;
 import android.app.AlarmManager;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -10,6 +11,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public AlarmManager malarmManager;
     public static ArrayList<AlarmObject> listOfAlarms = new ArrayList<>();
     AlarmController alarmController;
+    MyListAdapter listAdapter;
     //UI:
     private ListView alarmListView;
     private FloatingActionButton addAlarmFlrBtn;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Gson gson;
+    ActionMode mActionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
         //(Internal)Alarm
         malarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmController = new AlarmController(this, mpendingIntent, malarmManager);
+        listAdapter = new MyListAdapter(this, listOfAlarms);
         //Other
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         gson = new Gson();
-        editor = sharedPreferences.edit();
     }
 
     private void setListners() {
@@ -100,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == Constants.ADD_ALALRM_CODE) {
             if (resultCode != Constants.RESULT_CODE_OK)
                 Toast.makeText(MainActivity.this, "Alarm cancelled", Toast.LENGTH_LONG).show();
-            else if (resultCode == Constants.RESULT_CODE_OK) {
+            else {
                 instantiateAlarmItems();
                 saveData();
                 loadData();
@@ -129,24 +136,87 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveData() {
+        editor = sharedPreferences.edit();
         String stringJSONData = gson.toJson(listOfAlarms);
         editor.putString("Alarm List", stringJSONData);
-        editor.commit();
-        Log.d("Smart Alarm", "Save");
+        editor.apply();
     }
 
     private void instantiateAlarmItems() {
-        MyListAdapter listAdapter = new MyListAdapter(MainActivity.this, listOfAlarms);
+        listAdapter = new MyListAdapter(MainActivity.this, listOfAlarms);
         alarmListView.setAdapter(listAdapter);
         alarmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent addAlarmIntent = new Intent(MainActivity.this, SetAlarmPage.class);
-                addAlarmIntent.putExtra("Edit?", true);
-                addAlarmIntent.putExtra("Pos", i);
-                startActivityForResult(addAlarmIntent, 1);
+                if (mActionMode != null) {
+                    listAdapter.toggleSelection(i);
+                    onListItemSelect(i);
+                } else {
+                    Intent addAlarmIntent = new Intent(MainActivity.this, SetAlarmPage.class);
+                    addAlarmIntent.putExtra("Edit?", true);
+                    addAlarmIntent.putExtra("Pos", i);
+                    startActivityForResult(addAlarmIntent, 1);
+                }
+            }
+        });
+        alarmListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> parent,
+                                           View view, int position, long id) {
+                listAdapter.toggleSelection(position);
+                ;
+                onListItemSelect(position);
+                return false;
             }
         });
     }
 
+    private void onListItemSelect(int position) {
+        Log.d("SmartAlarm", "Sel list: " + listAdapter.getSelectedIds());
+        if (listAdapter.getSelectedIds().size() > 0 && mActionMode == null)
+            mActionMode = startActionMode(new ActionModeCallback());
+        else if (listAdapter.getSelectedIds().size() == 0 && mActionMode != null)
+            mActionMode.finish();
+        if (mActionMode != null)
+            mActionMode.setTitle(String.valueOf(listAdapter.getSelectedIds().size()) + " selected");
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.context_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.btn_delete) {
+                ArrayList<Integer> selected = listAdapter.getSelectedIds();
+                for (int i = 0; i < selected.size(); i++)
+                    alarmController.cancelAlarm(selected.get(i));
+
+                for (int i = 0; i < selected.size(); i++) {
+                    listOfAlarms.remove(listOfAlarms.get(selected.get(i)));
+                    listAdapter.notifyDataSetChanged();
+                    actionMode.finish();
+                    instantiateAlarmItems();
+                    saveData();
+                    loadData();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            listAdapter.removeSelection();
+            mActionMode = null;
+        }
+    }
 }
