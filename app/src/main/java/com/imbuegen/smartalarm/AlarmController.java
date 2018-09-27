@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.Calendar;
+
 public class AlarmController {
 
     private Context context;
@@ -37,10 +39,12 @@ public class AlarmController {
 
     private void set(Intent _mintent, int _flag, int _priorTime, int index) {
         mpendingIntent = PendingIntent.getBroadcast(context, 0, _mintent, _flag);
-        if (MainActivity.listOfAlarms.get(index).isRepeatOn())
-            malarmManager.setRepeating(AlarmManager.RTC_WAKEUP, MainActivity.listOfAlarms.get(index).getAlarmTime().getTimeInMillis() - (long) _priorTime * 1000 * 60, 24 * 60 * 60 * 1000, mpendingIntent);    //For test-> *1000, actual-> *1000*60.
-        else
-            malarmManager.setExact(AlarmManager.RTC_WAKEUP, MainActivity.listOfAlarms.get(index).getAlarmTime().getTimeInMillis() - (long) _priorTime * 1000 * 60, mpendingIntent);    //For test-> *1000, actual-> *1000*60.
+        if (Calendar.getInstance().getTimeInMillis() < (MainActivity.listOfAlarms.get(index).getAlarmTime().getTimeInMillis() - (long) _priorTime * 1000 * 60)) {
+            if (MainActivity.listOfAlarms.get(index).isRepeatOn())
+                malarmManager.setRepeating(AlarmManager.RTC_WAKEUP, MainActivity.listOfAlarms.get(index).getAlarmTime().getTimeInMillis() - (long) _priorTime * 1000 * 60, 24 * 60 * 60 * 1000, mpendingIntent);    //For test-> *1000, actual-> *1000*60.
+            else
+                malarmManager.setExact(AlarmManager.RTC_WAKEUP, MainActivity.listOfAlarms.get(index).getAlarmTime().getTimeInMillis() - (long) _priorTime * 1000 * 60, mpendingIntent);    //For test-> *1000, actual-> *1000*60.
+        }
     }
 
     public void cancelAlarm(int _index) {
@@ -49,13 +53,13 @@ public class AlarmController {
         for (int i = 0; i < MainActivity.listOfAlarms.get(_index).getSnoozeList().size(); i++) {
             int temp = 5 * _index + i;
             cancelIt(mintent, temp);
-            Log.d("SmartAlarm", "Cancelling alarm:- " + _index);
+//            Log.d("SmartAlarm", "Cancelling alarm:- " + _index);
         }
     }
 
     private void cancelIt(Intent _mintent, int _flag) {
         mpendingIntent = PendingIntent.getBroadcast(context, 0, _mintent, _flag);
         malarmManager.cancel(mpendingIntent);
-        Log.d("SmartAlarm", "Cancelled alarm:- " + _flag);
+//        Log.d("SmartAlarm", "Cancelled alarm:- " + _flag);
     }
 }

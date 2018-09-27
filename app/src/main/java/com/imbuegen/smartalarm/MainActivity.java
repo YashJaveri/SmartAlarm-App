@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         if (listOfAlarms.size() > 0) {
             for (int i = 0; i < listOfAlarms.size(); i++) {
                 if (listOfAlarms.get(i).isOn())
-                    alarmController.setSmartAlarm(i);
+                    if (listOfAlarms.get(i).getAlarmTime().getTimeInMillis() > Calendar.getInstance().getTimeInMillis())
+                        alarmController.setSmartAlarm(i);
             }
         }
     }
@@ -111,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 instantiateAlarmItems();
                 saveData();
                 loadData();
-                for (int i = 0; i < listOfAlarms.size(); i++)
-                    Log.d("Smart Alarm isOn:", Boolean.toString(listOfAlarms.get(i).isOn()));
+                /*for (int i = 0; i < listOfAlarms.size(); i++)
+                    Log.d("Smart Alarm isOn:", Boolean.toString(listOfAlarms.get(i).isOn()));*/
                 if (listOfAlarms.size() > 0) {
                     for (int i = 0; i < listOfAlarms.size(); i++) {
                         if (listOfAlarms.get(i).isOn())

@@ -86,7 +86,6 @@ public class SnoozePageActivity extends AppCompatActivity {
             listOfAlarms = gson.fromJson(stringJSONData, type);
             alarmObject = listOfAlarms.get(getIntent().getIntExtra("Index", 0));
         }
-
         timer = new Timer();
         //Media
         alarm1 = MediaPlayer.create(this, R.raw.alarm_clock);
