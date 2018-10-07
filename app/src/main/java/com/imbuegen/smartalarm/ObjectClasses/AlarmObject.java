@@ -14,7 +14,7 @@ public class AlarmObject implements Serializable{
     private boolean airplaneIsOn = true;
     private boolean repeatIsOn = false;
     private String alarmTitle = "Wake Up!";
-    private boolean isOn = true;
+    private Boolean isOn = true;
     private int minDuration, hourDuration;
 
     public Calendar getAlarmTime() {
@@ -49,11 +49,11 @@ public class AlarmObject implements Serializable{
         this.repeatIsOn = repeatIsOn;
     }
 
-    public boolean isOn() {
+    public Boolean isOn() {
         return isOn;
     }
 
-    public void setOn(boolean on) {
+    public void setOn(Boolean on) {
         isOn = on;
     }
 

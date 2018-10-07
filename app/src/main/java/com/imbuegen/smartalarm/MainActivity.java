@@ -1,23 +1,18 @@
 package com.imbuegen.smartalarm;
 
 import android.app.AlarmManager;
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,11 +23,10 @@ import com.imbuegen.smartalarm.ObjectClasses.AlarmObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     //(Internal)Alarm:
     private PendingIntent mpendingIntent;
     public AlarmManager malarmManager;
@@ -47,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     Gson gson;
     ActionMode mActionMode;
+    private static MainActivity instance ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        instance = this;
         init();
         setListners();
         loadData();
@@ -74,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         loadData();
         instantiateAlarmItems();
     }
@@ -112,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 instantiateAlarmItems();
                 saveData();
                 loadData();
-                /*for (int i = 0; i < listOfAlarms.size(); i++)
-                    Log.d("Smart Alarm isOn:", Boolean.toString(listOfAlarms.get(i).isOn()));*/
                 if (listOfAlarms.size() > 0) {
                     for (int i = 0; i < listOfAlarms.size(); i++) {
                         if (listOfAlarms.get(i).isOn())
@@ -136,7 +131,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveData() {
+    public static MainActivity getInstatnce(){
+        return instance;
+    }
+
+    public void saveData() {
         editor = sharedPreferences.edit();
         String stringJSONData = gson.toJson(listOfAlarms);
         editor.putString("Alarm List", stringJSONData);
@@ -165,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent,
                                            View view, int position, long id) {
                 listAdapter.toggleSelection(position);
-                ;
                 onListItemSelect(position);
                 return false;
             }
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onListItemSelect(int position) {
-        Log.d("SmartAlarm", "Sel list: " + listAdapter.getSelectedIds());
         if (listAdapter.getSelectedIds().size() > 0 && mActionMode == null)
             mActionMode = startActionMode(new ActionModeCallback());
         else if (listAdapter.getSelectedIds().size() == 0 && mActionMode != null)
